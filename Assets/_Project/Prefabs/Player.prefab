@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6723694798530281018}
   - component: {fileID: 8714343167676530621}
+  - component: {fileID: 3552821888715335669}
+  - component: {fileID: 4721892642121622403}
   m_Layer: 9
   m_Name: Visual
   m_TagString: Untagged
@@ -91,6 +93,44 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &3552821888715335669
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214722605501470977}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a47f297e3b032614e85229c76d308603, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4721892642121622403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214722605501470977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b988e52a30e40ba43968502db0dde9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Player.PlayerAnimator2D
+  animator: {fileID: 3552821888715335669}
+  spriteRenderer: {fileID: 8714343167676530621}
+  movement: {fileID: 3724377355872091455}
+  idleFreezeThreshold: 0.01
 --- !u!1 &2760431423398366207
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Project.Player
 {
@@ -6,7 +6,7 @@ namespace Project.Player
     public class PlayerMovement2D : MonoBehaviour
     {
         [Header("Tuning")]
-        [SerializeField] private float moveSpeed = 4.5f;
+        [SerializeField] private float moveSpeed;
 
         private Rigidbody2D _rb;
         private Vector2 _input;
@@ -14,6 +14,8 @@ namespace Project.Player
 
         public Vector2 LastMoveDir { get; private set; } = Vector2.down;
         public float Speed01 { get; private set; }
+
+        public Vector2 MoveDir => _move;
 
         private void Awake()
         {
@@ -23,7 +25,6 @@ namespace Project.Player
         private void Update()
         {
             _input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
             _move = _input.normalized;
 
             if (_move.sqrMagnitude > 0.0001f)
