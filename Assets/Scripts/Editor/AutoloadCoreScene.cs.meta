@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 263924c02e2df4ec8a7b0f6d3d38dfc8
+AssetOrigin:
+  serializedVersion: 1
+  productId: 121080
+  packageName: RPG Farming Kit
+  packageVersion: 1.1.2
+  assetPath: Assets/Scripts/Editor/AutoloadCoreScene.cs
+  uploadId: 770333

@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 1c06b6026ddf456fb452280820802320
+timeCreated: 1736617959
+AssetOrigin:
+  serializedVersion: 1
+  productId: 121080
+  packageName: RPG Farming Kit
+  packageVersion: 1.1.2
+  assetPath: Assets/Scripts/Editor/FarmingKitToolbar.cs
+  uploadId: 770333
