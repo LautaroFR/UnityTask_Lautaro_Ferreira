@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Project.Player
 {
-    [DisallowMultipleComponent]
     [RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
     public class PlayerAnimator2D : MonoBehaviour
     {
@@ -64,7 +63,7 @@ namespace Project.Player
             // Flip only when relevant and only if it changed.
             if (Mathf.Abs(_animDir.x) > 0.1f)
             {
-                bool flipX = _animDir.x < 0f;
+                bool flipX = _animDir.x > 0f;
                 if (flipX != _lastFlipX)
                 {
                     _spriteRenderer.flipX = flipX;

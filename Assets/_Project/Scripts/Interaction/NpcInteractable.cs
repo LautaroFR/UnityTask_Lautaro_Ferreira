@@ -1,9 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Project.UI;
 
 namespace Project.Interaction
 {
-    public class NpcInteractable : MonoBehaviour
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Collider2D))]
+    public class NpcInteractable : MonoBehaviour, IInteractable
     {
         [System.Serializable]
         public struct DialogueLine
@@ -23,6 +25,8 @@ namespace Project.Interaction
         private int _lineIndex = 0;
         private bool _isDialogueOpen = false;
 
+        private PlayerInteractor _interactor;
+
         private void Reset()
         {
             var col = GetComponent<Collider2D>();
@@ -35,19 +39,11 @@ namespace Project.Interaction
                 tooltip.gameObject.SetActive(false);
         }
 
-        private void Update()
+        // 🔹 Este método reemplaza el Input.GetKeyDown(KeyCode.E)
+        public void Interact()
         {
             if (!_playerInRange) return;
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                AdvanceDialogue();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                CloseDialogue();
-            }
+            AdvanceDialogue();
         }
 
         private void AdvanceDialogue()
@@ -95,6 +91,10 @@ namespace Project.Interaction
 
             _playerInRange = true;
 
+            _interactor = other.GetComponent<PlayerInteractor>();
+            if (_interactor != null)
+                _interactor.SetInteractable(this);
+
             if (tooltip != null)
                 tooltip.gameObject.SetActive(true);
         }
@@ -104,6 +104,11 @@ namespace Project.Interaction
             if (!other.CompareTag("Player")) return;
 
             _playerInRange = false;
+
+            if (_interactor != null)
+                _interactor.ClearInteractable(this);
+
+            _interactor = null;
 
             if (tooltip != null)
                 tooltip.gameObject.SetActive(false);

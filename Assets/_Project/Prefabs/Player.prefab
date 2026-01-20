@@ -127,8 +127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b988e52a30e40ba43968502db0dde9fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Player.PlayerAnimator2D
-  animator: {fileID: 3552821888715335669}
-  spriteRenderer: {fileID: 8714343167676530621}
   movement: {fileID: 3724377355872091455}
   idleFreezeThreshold: 0.01
 --- !u!1 &2760431423398366207
@@ -143,6 +141,8 @@ GameObject:
   - component: {fileID: 6956417717810786264}
   - component: {fileID: 3597496889316763650}
   - component: {fileID: 3724377355872091455}
+  - component: {fileID: 628728128031776863}
+  - component: {fileID: 8345197863677033883}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -243,3 +243,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Player.PlayerMovement2D
   moveSpeed: 6
+--- !u!114 &628728128031776863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2760431423398366207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7013e17a8532d254e89c267e4b3226d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.InventoryComponent
+  slotCount: 16
+  inventoryUI: {fileID: 0}
+--- !u!114 &8345197863677033883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2760431423398366207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 954fc7f8fe55066448bf707bc773a856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Interaction.PlayerInteractor
+  interactKey: 101
+  pickupKey: 112
+  inventoryKey: 9

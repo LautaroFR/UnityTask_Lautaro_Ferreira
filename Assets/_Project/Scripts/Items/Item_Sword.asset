@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Items.GameItemData
   id: 3
   displayName: Sword
-  description: 
-  type: 0
-  icon: {fileID: 0}
+  description: One-handed Sword
+  type: 1
+  icon: {fileID: -8551796387700029265, guid: d7f3ad2ae8b37de429bb5df1e87a7b0b, type: 3}

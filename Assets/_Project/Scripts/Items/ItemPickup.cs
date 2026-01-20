@@ -1,48 +1,50 @@
 using UnityEngine;
 using Project.Items;
+using Project.Inventory;
 
 namespace Project.Interaction
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider2D))]
-    public class ItemPickup : MonoBehaviour
+    public class ItemPickup : MonoBehaviour, IPickupable
     {
         [Header("Item")]
         [SerializeField] private GameItemData item;
 
-        [Header("Wiring")]
-        [SerializeField] private PlayerInventory inventory;
+        [Header("UI")]
         [SerializeField] private Transform tooltip;
 
-        private bool _playerInRange;
+        private PlayerInventory _inventory;
+        private PlayerInteractor _interactor;
         private bool _pickedUp;
-
-        private const KeyCode InteractKey = KeyCode.P;
 
         private void Awake()
         {
+            var col = GetComponent<Collider2D>();
+            col.isTrigger = true;
+
             if (tooltip != null)
                 tooltip.gameObject.SetActive(false);
         }
 
-        private void Update()
+        public void Pickup()
         {
-            if (_pickedUp || !_playerInRange) return;
+            if (_pickedUp) return;
+            if (_inventory == null || item == null) return;
 
-            if (Input.GetKeyDown(InteractKey))
-            {
-                if (item == null || inventory == null) return;
+            if (!_inventory.TryAdd(item, 1))
+                return;
 
-                inventory.Add(item);
-                _pickedUp = true;
+            _pickedUp = true;
 
-                Debug.Log($"Picked up {item.displayName}");
+            if (tooltip != null)
+                tooltip.gameObject.SetActive(false);
 
-                if (tooltip != null)
-                    tooltip.gameObject.SetActive(false);
+            // Unregister from interactor so it doesn't keep a stale reference
+            if (_interactor != null)
+                _interactor.ClearPickupable(this);
 
-                gameObject.SetActive(false);
-            }
+            gameObject.SetActive(false);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -50,11 +52,14 @@ namespace Project.Interaction
             if (_pickedUp) return;
             if (!other.CompareTag("Player")) return;
 
-            if (inventory == null)
-                inventory = other.GetComponent<PlayerInventory>();
+            _inventory = other.GetComponent<PlayerInventory>();
+            _interactor = other.GetComponent<PlayerInteractor>();
 
-            _playerInRange = true;
-            if (tooltip != null) tooltip.gameObject.SetActive(true);
+            if (_interactor != null)
+                _interactor.SetPickupable(this);
+
+            if (tooltip != null)
+                tooltip.gameObject.SetActive(true);
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -62,8 +67,14 @@ namespace Project.Interaction
             if (_pickedUp) return;
             if (!other.CompareTag("Player")) return;
 
-            _playerInRange = false;
-            if (tooltip != null) tooltip.gameObject.SetActive(false);
+            if (_interactor != null)
+                _interactor.ClearPickupable(this);
+
+            _inventory = null;
+            _interactor = null;
+
+            if (tooltip != null)
+                tooltip.gameObject.SetActive(false);
         }
     }
 }
