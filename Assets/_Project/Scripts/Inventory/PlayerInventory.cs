@@ -28,6 +28,8 @@ namespace Project.Inventory
         public event System.Action<bool> InventoryVisibilityChanged;
         public event System.Action<string> EquippedWeaponChanged;
 
+        private GameItemData _equippedWeaponItem;
+
         private void Awake()
         {
             Slots = new InventorySlot[slotCount];
@@ -182,22 +184,16 @@ namespace Project.Inventory
             if (!IsValidIndex(SelectedIndex)) return false;
             if (Slots[SelectedIndex].IsEmpty) return false;
 
-            var slot = Slots[SelectedIndex];
-            var item = slot.item;
-
+            var item = Slots[SelectedIndex].item;
             if (item == null) return false;
 
             switch (item.type)
             {
                 case ItemType.Consumable:
-                    TryRemoveAt(SelectedIndex, 1);
-                    return true;
+                    return TryRemoveAt(SelectedIndex, 1);
 
                 case ItemType.Weapon:
-                    EquippedWeaponId = item.id;
-                    EquippedWeaponChanged?.Invoke(EquippedWeaponId);
-                    InventoryChanged?.Invoke();
-                    return true;
+                    return TryEquipFromSlot(SelectedIndex);
 
                 default:
                     return false;
@@ -252,6 +248,73 @@ namespace Project.Inventory
 
         private bool IsValidIndex(int index) => index >= 0 && index < Slots.Length;
 
+        private bool TryAddToFirstEmpty(GameItemData item, int amount)
+        {
+            if (item == null || amount <= 0) return false;
+
+            int empty = FindFirstEmptySlot();
+            if (empty < 0) return false;
+
+            Slots[empty].item = item;
+            Slots[empty].amount = amount;
+            return true;
+        }
+
+        public bool TryEquipFromSlot(int index)
+        {
+            if (!IsValidIndex(index)) return false;
+            if (Slots[index].IsEmpty) return false;
+
+            var item = Slots[index].item;
+            if (item == null) return false;
+            if (item.type != ItemType.Weapon) return false;
+
+            // 1) If there's a weapon already equipped, return it to inventory
+            if (_equippedWeaponItem != null)
+            {
+                // Return previous equipped weapon to inventory (end of occupied = first empty)
+                bool returned = TryAddToFirstEmpty(_equippedWeaponItem, 1);
+                if (!returned) return false; // no space to unequip -> can't equip new one
+            }
+
+            // 2) Remove the new weapon from inventory
+            Slots[index].amount -= 1;
+            if (Slots[index].amount <= 0)
+                Slots[index].Clear();
+
+            // 3) Equip new weapon
+            _equippedWeaponItem = item;
+            EquippedWeaponId = item.id;
+
+            // If we equipped from selected slot, keep UX clean
+            if (SelectedIndex == index)
+                Select(-1);
+
+            InventoryChanged?.Invoke();
+            EquippedWeaponChanged?.Invoke(EquippedWeaponId);
+            return true;
+        }
+
+        public bool TryUnequipWeapon()
+        {
+            if (string.IsNullOrWhiteSpace(EquippedWeaponId)) return false;
+            if (itemDatabase == null) return false;
+
+            if (!itemDatabase.TryGet(EquippedWeaponId, out var weapon) || weapon == null)
+                return false;
+
+            int empty = FindFirstEmptySlot();
+            if (empty < 0) return false;
+
+            Slots[empty].item = weapon;
+            Slots[empty].amount = 1;
+
+            EquippedWeaponId = null;
+            EquippedWeaponChanged?.Invoke(null);
+            InventoryChanged?.Invoke();
+
+            return true;
+        }
 
         #region Save Data
         public PlayerSaveData ToSaveData()

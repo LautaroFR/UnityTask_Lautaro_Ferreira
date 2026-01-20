@@ -16,6 +16,9 @@ namespace Project.Items
         [TextArea] public string description;
 
         public ItemType type;
-        public Sprite icon;           
+        public Sprite icon;
+
+        [SerializeField] private RuntimeAnimatorController animatorOverride;
+        public RuntimeAnimatorController AnimatorOverride => animatorOverride;
     }
 }

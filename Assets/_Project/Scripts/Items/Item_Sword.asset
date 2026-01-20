@@ -17,3 +17,4 @@ MonoBehaviour:
   description: One-handed Sword
   type: 1
   icon: {fileID: -8551796387700029265, guid: d7f3ad2ae8b37de429bb5df1e87a7b0b, type: 3}
+  animatorOverride: {fileID: 9100000, guid: dc48f3b68b237c044a567f7b9be7e1a5, type: 2}
