@@ -1,5 +1,6 @@
-using UnityEngine;
+using Item.Inventory;
 using Project.Inventory;
+using UnityEngine;
 
 namespace Project.Interaction
 {
@@ -31,7 +32,12 @@ namespace Project.Interaction
                 _currentPickupable?.Pickup();
 
             if (Input.GetKeyDown(inventoryKey))
+            {
                 _inventory?.ToggleInventoryUI();
+
+                if (_inventory != null && !_inventory.IsOpen)
+                    Project.Save.SaveService.Save(_inventory.ToSaveData());
+            }
         }
 
         public void SetInteractable(IInteractable interactable) => _currentInteractable = interactable;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Project.Items;
 using UnityEngine.UI;
+using Project.Save;
 
 namespace Project.Inventory
 {
@@ -9,6 +10,7 @@ namespace Project.Inventory
     {
         [Header("Config")]
         [SerializeField, Min(1)] private int slotCount = 16;
+        [SerializeField] private ItemDatabase itemDatabase;
 
         [Header("UI (optional)")]
         [SerializeField] private GameObject inventoryUI;
@@ -17,6 +19,7 @@ namespace Project.Inventory
         public InventorySlot[] Slots { get; private set; }
 
         public int SelectedIndex { get; private set; } = -1;
+        public bool IsOpen => inventoryUI != null && inventoryUI.activeSelf;
 
         public string EquippedWeaponId { get; private set; }
 
@@ -34,6 +37,9 @@ namespace Project.Inventory
         {
             if (inventoryUI != null)
                 inventoryUI.SetActive(false);
+
+            if (Project.Save.SaveService.TryLoad(out var data))
+                LoadFrom(data);
 
             Select(-1);
         }
@@ -245,5 +251,78 @@ namespace Project.Inventory
         }
 
         private bool IsValidIndex(int index) => index >= 0 && index < Slots.Length;
+
+
+        #region Save Data
+        public PlayerSaveData ToSaveData()
+        {
+            var data = new PlayerSaveData();
+            data.equippedWeaponId = EquippedWeaponId;
+
+            for (int i = 0; i < Slots.Length; i++)
+            {
+                if (Slots[i].IsEmpty) continue;
+
+                var it = Slots[i].item;
+                if (it == null || string.IsNullOrWhiteSpace(it.id)) continue;
+
+                data.slots.Add(new InventorySlotSave
+                {
+                    itemId = it.id,
+                    amount = Slots[i].amount
+                });
+            }
+
+            return data;
+        }
+
+        public void LoadFrom(PlayerSaveData data)
+        {
+            if (data == null) return;
+
+            // Clear
+            for (int i = 0; i < Slots.Length; i++)
+                Slots[i].Clear();
+
+            EquippedWeaponId = data.equippedWeaponId;
+
+            if (itemDatabase == null)
+            {
+                Debug.LogError("[PlayerInventory] ItemDatabase is not assigned.", this);
+                InventoryChanged?.Invoke();
+                return;
+            }
+
+            int index = 0;
+            foreach (var saved in data.slots)
+            {
+                if (index >= Slots.Length) break;
+                if (saved == null || string.IsNullOrWhiteSpace(saved.itemId)) continue;
+                if (saved.amount <= 0) continue;
+
+                if (!itemDatabase.TryGet(saved.itemId, out var item))
+                    continue;
+
+                Slots[index].item = item;
+                Slots[index].amount = saved.amount;
+                index++;
+            }
+
+            Select(-1);
+            InventoryChanged?.Invoke();
+            EquippedWeaponChanged?.Invoke(EquippedWeaponId);
+        }
+
+        public void ClearAll()
+        {
+            for (int i = 0; i < Slots.Length; i++)
+                Slots[i].Clear();
+
+            EquippedWeaponId = null;
+            Select(-1);
+            InventoryChanged?.Invoke();
+            EquippedWeaponChanged?.Invoke(EquippedWeaponId);
+        }
+        #endregion
     }
 }

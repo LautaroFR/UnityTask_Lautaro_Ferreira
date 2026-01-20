@@ -256,6 +256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.InventoryComponent
   slotCount: 16
+  itemDatabase: {fileID: 11400000, guid: 34b90c504094fd040a1d9f8b13d6ea39, type: 2}
   inventoryUI: {fileID: 0}
 --- !u!114 &8345197863677033883
 MonoBehaviour:
