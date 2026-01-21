@@ -1009,13 +1009,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Interaction.NpcInteractable
   lines:
   - speaker: 0
-    text: "Hi! I\xB4m Sarah. Hoasd"
+    text: Hello, adventurer! Welcome. You look like someone ready for a journey.
   - speaker: 1
-    text: xzczx
+    text: "Hi! I\u2019m doing well, thanks. And you?"
   - speaker: 0
-    text: qweasxc
+    text: "I\u2019ve been better, to be honest. This place hasn\u2019t been the same
+      lately."
   - speaker: 1
-    text: nbnbn
+    text: What happened?
+  - speaker: 1
+    text: What happened?
+  - speaker: 0
+    text: Could you help me? Pick up everything you find using P, and open your inventory
+      with TAB to manage your items.
+  - speaker: 0
+    text: "Once you\u2019re ready, come back and we\u2019ll continue."
   dialogueUI: {fileID: 818647297}
   tooltip: {fileID: 1245954052}
 --- !u!1 &743756850
