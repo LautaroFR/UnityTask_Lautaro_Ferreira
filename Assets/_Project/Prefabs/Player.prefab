@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6723694798530281018}
   - component: {fileID: 8714343167676530621}
   - component: {fileID: 3552821888715335669}
+  - component: {fileID: 5236966437950597872}
   - component: {fileID: 4721892642121622403}
   m_Layer: 9
   m_Name: Visual
@@ -115,6 +116,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5236966437950597872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214722605501470977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad192e3d86a6bee4b9058d5fed1581c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Player.PlayerAnimationEquipmentDriver
+  inventory: {fileID: 628728128031776863}
+  itemDatabase: {fileID: 11400000, guid: 34b90c504094fd040a1d9f8b13d6ea39, type: 2}
 --- !u!114 &4721892642121622403
 MonoBehaviour:
   m_ObjectHideFlags: 0

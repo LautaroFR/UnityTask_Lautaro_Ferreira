@@ -8,6 +8,7 @@ namespace Project.UI
     {
         [Header("Wiring")]
         [SerializeField] private PlayerInventory inventory;
+        [SerializeField] private InventorySlotView equippedWeaponSlotView;
         [SerializeField] private InventorySlotView slotPrefab;
         [SerializeField] private Transform slotsRoot;
         [SerializeField] private InventoryDetailsPanel detailsPanel;
@@ -66,6 +67,11 @@ namespace Project.UI
                 view.Bind(inventory, i);
                 _slotViews[i] = view;
             }
+
+            if (equippedWeaponSlotView != null)
+                equippedWeaponSlotView.Bind(inventory, PlayerInventory.EquippedSlotIndex);
+
+            RefreshAll();
         }
 
         private void RefreshAll()
@@ -74,6 +80,9 @@ namespace Project.UI
 
             for (int i = 0; i < _slotViews.Length; i++)
                 _slotViews[i]?.Refresh();
+
+            if (equippedWeaponSlotView != null)
+                equippedWeaponSlotView.Refresh();
         }
     }
 }

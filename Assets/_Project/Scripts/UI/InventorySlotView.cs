@@ -39,11 +39,29 @@ namespace Project.UI
 
         public void Refresh()
         {
-            if (_inventory == null || _inventory.Slots == null) return;
-            if (_index < 0 || _index >= _inventory.Slots.Length) return;
+            if (_inventory == null) return;
 
-            var slot = _inventory.Slots[_index];
-            bool occupied = !slot.IsEmpty;
+            bool occupied;
+            Sprite sprite = null;
+            int amount = 0;
+
+            if (_index == PlayerInventory.EquippedSlotIndex)
+            {
+                var equipped = _inventory.GetEquippedWeaponItem();
+                occupied = equipped != null;
+                sprite = occupied ? equipped.icon : null;
+                amount = 1;
+            }
+            else
+            {
+                if (_inventory.Slots == null) return;
+                if (_index < 0 || _index >= _inventory.Slots.Length) return;
+
+                var slot = _inventory.Slots[_index];
+                occupied = !slot.IsEmpty;
+                sprite = occupied && slot.item != null ? slot.item.icon : null;
+                amount = occupied ? slot.amount : 0;
+            }
 
             if (button != null)
                 button.interactable = occupied;
@@ -65,19 +83,31 @@ namespace Project.UI
             if (icon != null)
             {
                 icon.enabled = true;
-                icon.sprite = slot.item != null ? slot.item.icon : null;
+                icon.sprite = sprite;
             }
 
+            // Equipped always shows no stack count; inventory shows count only if > 1
             if (amountText != null)
-                amountText.text = slot.amount > 1 ? slot.amount.ToString() : string.Empty;
+            {
+                if (_index == PlayerInventory.EquippedSlotIndex)
+                    amountText.text = string.Empty;
+                else
+                    amountText.text = amount > 1 ? amount.ToString() : string.Empty;
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
             if (_inventory == null) return;
+            if (eventData.button != PointerEventData.InputButton.Left) return;
 
-            // If empty, ignore (even if someone forced interactable)
-            if (_inventory.Slots[_index].IsEmpty) return;
+            // If equipped slot has nothing equipped, ignore
+            if (_index == PlayerInventory.EquippedSlotIndex && !_inventory.HasEquippedWeapon)
+                return;
+
+            // If normal slot is empty, ignore
+            if (_index >= 0 && _index < _inventory.Slots.Length && _inventory.Slots[_index].IsEmpty)
+                return;
 
             _inventory.Select(_index);
         }
@@ -85,10 +115,11 @@ namespace Project.UI
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (_inventory == null) return;
+            if (_index == PlayerInventory.EquippedSlotIndex) return;
+
             if (_inventory.Slots[_index].IsEmpty) return;
             if (_rootCanvas == null) return;
 
-            // Ghost icon
             _dragGhost = new GameObject("DragGhost").AddComponent<Image>();
             _dragGhost.transform.SetParent(_rootCanvas.transform, false);
             _dragGhost.raycastTarget = false;
@@ -96,7 +127,6 @@ namespace Project.UI
             var slot = _inventory.Slots[_index];
             _dragGhost.sprite = slot.item != null ? slot.item.icon : null;
             _dragGhost.enabled = _dragGhost.sprite != null;
-
             _dragGhost.SetNativeSize();
             _dragGhost.transform.localScale = Vector3.one * 0.9f;
 
@@ -120,6 +150,7 @@ namespace Project.UI
         public void OnDrop(PointerEventData eventData)
         {
             if (_inventory == null) return;
+            if (_index == PlayerInventory.EquippedSlotIndex) return;
 
             var dragged = eventData.pointerDrag != null
                 ? eventData.pointerDrag.GetComponentInParent<InventorySlotView>()
@@ -131,20 +162,15 @@ namespace Project.UI
             int from = dragged._index;
             int to = _index;
 
+            if (from < 0) return; // ignore equipped drag for now
             if (from == to) return;
             if (_inventory.Slots[from].IsEmpty) return;
 
-            // Empty target -> MOVE (no shifting)
             if (_inventory.Slots[to].IsEmpty)
-            {
                 _inventory.TryMove(from, to);
-                return;
-            }
-
-            // Occupied target -> SWAP
-            _inventory.TrySwap(from, to);
+            else
+                _inventory.TrySwap(from, to);
         }
-
 
         private void UpdateDragGhostPosition(PointerEventData eventData)
         {

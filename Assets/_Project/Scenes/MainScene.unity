@@ -499,26 +499,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30e67586f5b6914f881994cea1723eb, type: 3}
---- !u!1 &473819400 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 214722605501470977, guid: 4d54f64999c055b44b0fde8e327b689f,
-    type: 3}
-  m_PrefabInstance: {fileID: 9071283847603550882}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &473819405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 473819400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad192e3d86a6bee4b9058d5fed1581c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.Player.PlayerAnimationEquipmentDriver
-  inventory: {fileID: 1276517739}
-  itemDatabase: {fileID: 11400000, guid: 34b90c504094fd040a1d9f8b13d6ea39, type: 2}
 --- !u!1 &476900110
 GameObject:
   m_ObjectHideFlags: 0
@@ -2107,6 +2087,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 570094909}
+  - {fileID: 1811763740}
   - {fileID: 1593346016}
   - {fileID: 1271146934}
   - {fileID: 1368005644}
@@ -2139,6 +2120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.UI.InventoryView
   inventory: {fileID: 1276517739}
+  equippedWeaponSlotView: {fileID: 1811763742}
   slotPrefab: {fileID: 3159562413882732485, guid: 37f12a8f6cd394f4bb4f860a540ea934,
     type: 3}
   slotsRoot: {fileID: 1368005644}
@@ -2571,7 +2553,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1593346016
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3064,6 +3046,153 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1807522694}
   m_CullTransparentMesh: 1
+--- !u!1001 &1811763739
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1518939043}
+    m_Modifications:
+    - target: {fileID: 1454240276057975866, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_Name
+      value: InventorySlotView
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 235.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7105504101938360302, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436935061877576676, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2750298860172458669, guid: e546f7af7eb8cfe40b506855c2a82c53,
+        type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 37f12a8f6cd394f4bb4f860a540ea934, type: 3}
+--- !u!224 &1811763740 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4682009163465808379, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+    type: 3}
+  m_PrefabInstance: {fileID: 1811763739}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1811763742 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3159562413882732485, guid: 37f12a8f6cd394f4bb4f860a540ea934,
+    type: 3}
+  m_PrefabInstance: {fileID: 1811763739}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e019ba08b8f31040841d7a6b5755efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.UI.InventorySlotView
 --- !u!4 &1845667278 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 37713692567408439, guid: f30e67586f5b6914f881994cea1723eb,
@@ -3413,11 +3542,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 214722605501470977, guid: 4d54f64999c055b44b0fde8e327b689f,
-        type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 473819405}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d54f64999c055b44b0fde8e327b689f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

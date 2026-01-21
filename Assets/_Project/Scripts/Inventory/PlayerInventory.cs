@@ -1,6 +1,5 @@
 using UnityEngine;
 using Project.Items;
-using UnityEngine.UI;
 using Project.Save;
 
 namespace Project.Inventory
@@ -18,17 +17,20 @@ namespace Project.Inventory
         public int SlotCount => slotCount;
         public InventorySlot[] Slots { get; private set; }
 
+        public const int EquippedSlotIndex = -2;
+
         public int SelectedIndex { get; private set; } = -1;
         public bool IsOpen => inventoryUI != null && inventoryUI.activeSelf;
 
         public string EquippedWeaponId { get; private set; }
+        private GameItemData _equippedWeaponItem;
+
+        public bool HasEquippedWeapon => !string.IsNullOrWhiteSpace(EquippedWeaponId);
 
         public event System.Action InventoryChanged;
         public event System.Action<int> SelectionChanged;
         public event System.Action<bool> InventoryVisibilityChanged;
         public event System.Action<string> EquippedWeaponChanged;
-
-        private GameItemData _equippedWeaponItem;
 
         private void Awake()
         {
@@ -40,7 +42,7 @@ namespace Project.Inventory
             if (inventoryUI != null)
                 inventoryUI.SetActive(false);
 
-            if (Project.Save.SaveService.TryLoad(out var data))
+            if (SaveService.TryLoad(out var data))
                 LoadFrom(data);
 
             Select(-1);
@@ -54,14 +56,41 @@ namespace Project.Inventory
             inventoryUI.SetActive(newState);
             InventoryVisibilityChanged?.Invoke(newState);
 
-            // Optional: when closing, clear selection
             if (!newState)
                 Select(-1);
         }
 
+        /// <summary>
+        /// Returns the equipped weapon item for UI/anim usage.
+        /// Uses cached reference when possible; falls back to database after load.
+        /// </summary>
+        public GameItemData GetEquippedWeaponItem()
+        {
+            if (!HasEquippedWeapon) return null;
+
+            // Fast path: already cached (best for UI responsiveness)
+            if (_equippedWeaponItem != null && _equippedWeaponItem.id == EquippedWeaponId)
+                return _equippedWeaponItem;
+
+            // Fallback: resolve from DB (needed after Load)
+            if (itemDatabase == null) return null;
+
+            if (itemDatabase.TryGet(EquippedWeaponId, out var item))
+            {
+                _equippedWeaponItem = item;
+                return item;
+            }
+
+            return null;
+        }
+
         public void Select(int index)
         {
-            if (index < -1 || index >= Slots.Length) return;
+            // Allow: -1 (none), -2 (equipped), or valid inventory indices
+            if (index != -1 && index != EquippedSlotIndex && (index < 0 || index >= Slots.Length))
+                return;
+
+            if (SelectedIndex == index) return;
 
             SelectedIndex = index;
             SelectionChanged?.Invoke(SelectedIndex);
@@ -71,7 +100,6 @@ namespace Project.Inventory
         {
             if (item == null || amount <= 0) return false;
 
-            // Stack rule (simple & sensible): Consumables stack, Weapons don't.
             bool canStack = item.type == ItemType.Consumable;
 
             if (canStack)
@@ -122,10 +150,8 @@ namespace Project.Inventory
             if (Slots[index].amount <= 0)
                 Slots[index].Clear();
 
-            // Keep things tidy
             Compact();
 
-            // If selection got emptied, clear it
             if (SelectedIndex == index && Slots[index].IsEmpty)
                 Select(-1);
 
@@ -133,10 +159,6 @@ namespace Project.Inventory
             return true;
         }
 
-        /// <summary>
-        /// Reorders the inventory like a list: removes slot from 'from' and inserts at 'to',
-        /// shifting intermediate items. Works great for "move to end and reorder".
-        /// </summary>
         public bool TryReorder(int from, int to)
         {
             if (!IsValidIndex(from) || !IsValidIndex(to)) return false;
@@ -158,7 +180,6 @@ namespace Project.Inventory
 
             Slots[to] = temp;
 
-            // Keep selection following the item logically (simple rule)
             if (SelectedIndex == from) SelectedIndex = to;
 
             InventoryChanged?.Invoke();
@@ -181,6 +202,9 @@ namespace Project.Inventory
 
         public bool TryUseOrEquipSelected()
         {
+            if (SelectedIndex == EquippedSlotIndex)
+                return TryUnequipWeapon();
+
             if (!IsValidIndex(SelectedIndex)) return false;
             if (Slots[SelectedIndex].IsEmpty) return false;
 
@@ -208,7 +232,6 @@ namespace Project.Inventory
 
         private void Compact()
         {
-            // Moves all non-empty slots to the front preserving order.
             int write = 0;
             for (int read = 0; read < Slots.Length; read++)
             {
@@ -234,6 +257,7 @@ namespace Project.Inventory
                 if (Slots[i].item != null && Slots[i].item.id == itemId)
                     return i;
             }
+
             return -1;
         }
 
@@ -269,24 +293,21 @@ namespace Project.Inventory
             if (item == null) return false;
             if (item.type != ItemType.Weapon) return false;
 
-            // 1) If there's a weapon already equipped, return it to inventory
+            // If there's a weapon already equipped, return it to inventory
             if (_equippedWeaponItem != null)
             {
-                // Return previous equipped weapon to inventory (end of occupied = first empty)
                 bool returned = TryAddToFirstEmpty(_equippedWeaponItem, 1);
-                if (!returned) return false; // no space to unequip -> can't equip new one
+                if (!returned) return false;
             }
 
-            // 2) Remove the new weapon from inventory
             Slots[index].amount -= 1;
             if (Slots[index].amount <= 0)
                 Slots[index].Clear();
 
-            // 3) Equip new weapon
+            // Equip new weapon
             _equippedWeaponItem = item;
             EquippedWeaponId = item.id;
 
-            // If we equipped from selected slot, keep UX clean
             if (SelectedIndex == index)
                 Select(-1);
 
@@ -297,11 +318,10 @@ namespace Project.Inventory
 
         public bool TryUnequipWeapon()
         {
-            if (string.IsNullOrWhiteSpace(EquippedWeaponId)) return false;
-            if (itemDatabase == null) return false;
+            if (!HasEquippedWeapon) return false;
 
-            if (!itemDatabase.TryGet(EquippedWeaponId, out var weapon) || weapon == null)
-                return false;
+            var weapon = GetEquippedWeaponItem();
+            if (weapon == null) return false;
 
             int empty = FindFirstEmptySlot();
             if (empty < 0) return false;
@@ -309,18 +329,25 @@ namespace Project.Inventory
             Slots[empty].item = weapon;
             Slots[empty].amount = 1;
 
+            _equippedWeaponItem = null;
             EquippedWeaponId = null;
-            EquippedWeaponChanged?.Invoke(null);
-            InventoryChanged?.Invoke();
 
+            // If the details panel is pointing to equipped slot, clear selection
+            if (SelectedIndex == EquippedSlotIndex)
+                Select(-1);
+
+            InventoryChanged?.Invoke();
+            EquippedWeaponChanged?.Invoke(null);
             return true;
         }
 
         #region Save Data
         public PlayerSaveData ToSaveData()
         {
-            var data = new PlayerSaveData();
-            data.equippedWeaponId = EquippedWeaponId;
+            var data = new PlayerSaveData
+            {
+                equippedWeaponId = EquippedWeaponId
+            };
 
             for (int i = 0; i < Slots.Length; i++)
             {
@@ -343,16 +370,17 @@ namespace Project.Inventory
         {
             if (data == null) return;
 
-            // Clear
             for (int i = 0; i < Slots.Length; i++)
                 Slots[i].Clear();
 
             EquippedWeaponId = data.equippedWeaponId;
+            _equippedWeaponItem = null;
 
             if (itemDatabase == null)
             {
                 Debug.LogError("[PlayerInventory] ItemDatabase is not assigned.", this);
                 InventoryChanged?.Invoke();
+                EquippedWeaponChanged?.Invoke(EquippedWeaponId);
                 return;
             }
 
@@ -363,13 +391,17 @@ namespace Project.Inventory
                 if (saved == null || string.IsNullOrWhiteSpace(saved.itemId)) continue;
                 if (saved.amount <= 0) continue;
 
-                if (!itemDatabase.TryGet(saved.itemId, out var item))
+                if (!itemDatabase.TryGet(saved.itemId, out var item) || item == null)
                     continue;
 
                 Slots[index].item = item;
                 Slots[index].amount = saved.amount;
                 index++;
             }
+
+            // Resolve equipped item reference (for UI/anim)
+            if (HasEquippedWeapon)
+                _equippedWeaponItem = GetEquippedWeaponItem();
 
             Select(-1);
             InventoryChanged?.Invoke();
@@ -381,10 +413,12 @@ namespace Project.Inventory
             for (int i = 0; i < Slots.Length; i++)
                 Slots[i].Clear();
 
+            _equippedWeaponItem = null;
             EquippedWeaponId = null;
+
             Select(-1);
             InventoryChanged?.Invoke();
-            EquippedWeaponChanged?.Invoke(EquippedWeaponId);
+            EquippedWeaponChanged?.Invoke(null);
         }
         #endregion
     }
