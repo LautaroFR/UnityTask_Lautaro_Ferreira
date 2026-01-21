@@ -81,7 +81,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 9999
   m_Sprite: {fileID: -6844216770410858050, guid: 2605f696e9238e34080a38756f61984b,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -158,6 +158,7 @@ GameObject:
   - component: {fileID: 3724377355872091455}
   - component: {fileID: 628728128031776863}
   - component: {fileID: 8345197863677033883}
+  - component: {fileID: 5740297184521735664}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -288,3 +289,16 @@ MonoBehaviour:
   interactKey: 101
   pickupKey: 112
   inventoryKey: 9
+--- !u!114 &5740297184521735664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2760431423398366207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 516533432ac5d584d9609d89808129b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Save.InventoryAutoSave
+  inventory: {fileID: 0}
